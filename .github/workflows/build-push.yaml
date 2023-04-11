@@ -1,0 +1,30 @@
+name: Build and Push Docker Image
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker Image
+        run: |
+          docker build -t ttl.sh/java-springboot-app:${{ github.sha | cut -c 1-7 }} .
+      - name: Push Docker Image
+        run: |
+          docker push ttl.sh/java-springboot-app:${{ github.sha | cut -c 1-7 }}
+      - name: Set image name
+        run: |
+          IMAGE_NAME=ttl.sh/java-springboot-app:${{ github.sha | cut -c 1-7 }}
+          sed -i "s|ttl.sh/java-springboot-app|${IMAGE_NAME}|g" kubernetes.yaml
+      - name: Commit files
+        run: |
+          git config --local user.email "deploy-bot@example.com"
+          git config --local user.name "deploy-bot"
+          git commit -m "Updating docker image in kubernetes manifest" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
