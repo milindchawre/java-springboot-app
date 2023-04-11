@@ -15,7 +15,7 @@ spec:
       terminationGracePeriodSeconds: 0
       containers:
       - name: java-api
-        image: ttl.sh/java-springboot-app:526d587:latest
+        image: ttl.sh/java-springboot-app:a48129c
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
