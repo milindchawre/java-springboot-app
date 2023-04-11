@@ -7,7 +7,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required to make sure that GITHUB_TOKEN has write permission on the repo
     steps:
       - uses: actions/checkout@v2
       - name: Build Docker Image
@@ -19,7 +19,7 @@ jobs:
       - name: Set image name
         run: |
           IMAGE_NAME=ttl.sh/java-springboot-app:${GITHUB_SHA::7}
-          sed -i "s|ttl.sh/java-springboot-app|${IMAGE_NAME}|g" kubernetes.yaml
+          sed -i "s|ttl.sh/java-springboot-app:.*|${IMAGE_NAME}|g" kubernetes.yaml
       - name: Commit files
         run: |
           git config user.email "actions@github.com"
