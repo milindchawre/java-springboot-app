@@ -6,6 +6,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v2
       - name: Build Docker Image
@@ -18,16 +20,16 @@ jobs:
         run: |
           IMAGE_NAME=ttl.sh/java-springboot-app:${GITHUB_SHA::7}
           sed -i "s|ttl.sh/java-springboot-app|${IMAGE_NAME}|g" kubernetes.yaml
-      # - name: Commit files
-      #   run: |
-      #     git config user.email "actions@github.com"
-      #     git config user.name "GitHub Actions"
-      #     git commit -m "Updating docker image in kubernetes manifest" -a
-      - uses: EndBug/add-and-commit@v9
-        with:
-          message: Show GitHub Actions logo
-          committer_name: GitHub Actions
-          committer_email: actions@github.com
+      - name: Commit files
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git commit -m "Updating docker image in kubernetes manifest" -a
+      # - uses: EndBug/add-and-commit@v9
+      #   with:
+      #     message: Show GitHub Actions logo
+      #     committer_name: GitHub Actions
+      #     committer_email: actions@github.com
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
